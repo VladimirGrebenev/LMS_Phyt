@@ -5,6 +5,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from .filters import CourseFilter, SubscriptionFilter
 from drf_yasg.utils import swagger_auto_schema
 from .permissions import IsModerator, IsTeacher
+from rest_framework.permissions import IsAuthenticated
 
 # пагинатор для Course
 class CourseLimitOffsetPagination(LimitOffsetPagination):
@@ -30,9 +31,9 @@ class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CourseSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        if self.request.method == 'POST' or self.request.method == 'DELETE':
             permission_classes = [IsAuthenticated, IsModerator]
-        elif self.action in ['retrieve', 'update', 'partial_update']:
+        elif self.request.method in ['PUT', 'PATCH']:
             permission_classes = [IsAuthenticated, IsTeacher | IsModerator]
         else:
             permission_classes = [IsAuthenticated]
