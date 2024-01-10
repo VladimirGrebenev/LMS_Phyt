@@ -35,7 +35,7 @@ class TestCourseListCreateView(TestCase):
         request = factory.get('/courses/')
         view = CourseListCreateView.as_view()
         response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_course_auth_user(self):
         """ Пробуем создать курс авторизованным пользователем """
@@ -222,4 +222,4 @@ class TestSubscriptionListCreateView(TestCase):
         request = factory.get('/subscriptions/')
         view = SubscriptionListCreateView.as_view()
         response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

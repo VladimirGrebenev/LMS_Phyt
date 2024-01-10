@@ -9,7 +9,7 @@ from users.views import RegisterUserAPIView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', RegisterUserAPIView.as_view(), name='register_user'),
-    path('api-auth/', include('rest_framework.urls')),
+    # path('api-auth/', include('rest_framework.urls')),
     path('token-api-auth/', views.obtain_auth_token),
     path('', include('courses.urls')),
     path('users/', include('users.urls')),
@@ -27,7 +27,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="MIT License"),
     ),
     public=True,
-    permission_classes=[permissions.IsAuthenticated],
+    permission_classes=[permissions.IsAuthenticatedOrReadOnly],
 )
 
 urlpatterns += [
