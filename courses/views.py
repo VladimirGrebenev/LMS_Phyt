@@ -26,7 +26,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
 
 
 class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    """By Course uu_id, you can retrieve, update or patch, delete Course"""
+    """By Course pk, you can retrieve, update or patch, delete Course"""
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
@@ -49,7 +49,8 @@ class SubscriptionListCreateView(generics.ListCreateAPIView):
 
 
 class SubscriptionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    """By Subscription uu_id, you can retrieve, update or patch, delete Subscription"""
+    """By Subscription pk, you can retrieve, update or patch, delete
+    Subscription"""
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
 
