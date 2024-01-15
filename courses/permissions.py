@@ -7,7 +7,7 @@ class IsTeacher(BasePermission):
     message = "You are not the TEACHER!"
 
     def has_object_permission(self, request, view, obj):
-        if request.user == obj.teacher:
+        if request.user == obj.course.teacher:
             return True
         return False
 

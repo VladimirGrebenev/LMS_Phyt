@@ -31,7 +31,6 @@ class UserListAPIView(generics.ListAPIView):
         return UserModelSerializer
 
 class RegisterUserAPIView(generics.CreateAPIView):
-    """View для класса CustomUser для регистрации нового пользователя"""
     permission_classes = [AllowAny]
     queryset = CustomUser.objects.all()
     serializer_class = UserRegisterSerializer
@@ -39,38 +38,5 @@ class RegisterUserAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         email = serializer.validated_data.get('email')
         if CustomUser.objects.filter(email=email).exists():
-            raise serializers.ValidationError(
-                'This email is already registered.')
+            raise serializers.ValidationError('This email is already registered.')
         serializer.save()
-
-    def post(self, request, *args, **kwargs):
-        # Extract the necessary data from the request
-        email = request.data.get('email')
-        password = request.data.get('password')
-        extra_fields = {
-            'user_name': request.data.get('user_name'),
-            # Add any additional fields you need for user creation
-        }
-
-        # Validate the data
-        if not email or not password:
-            return Response({'error': 'Email and password are required.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        if CustomUser.objects.filter(email=email).exists():
-            return Response({'error': 'This email is already registered.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        # Create a new user
-        try:
-            user = CustomUser.objects.create_user(email=email,
-                                                  password=password,
-                                                  **extra_fields)
-            # if user:
-            #     users_tasks.send_welcome_email(user.id)
-
-        except ValueError as e:
-            return Response({'error': str(e)},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({'message': 'User registered successfully.'},
-                        status=status.HTTP_201_CREATED)

@@ -55,9 +55,9 @@ class SubscriptionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
     serializer_class = SubscriptionSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        if self.request.method in ['POST', 'DELETE']:
             permission_classes = [IsAuthenticated, IsModerator]
-        elif self.action in ['retrieve', 'update', 'partial_update']:
+        elif self.request.method in ['GET', 'PUT', 'PATCH']:
             permission_classes = [IsAuthenticated, IsTeacher | IsModerator]
         else:
             permission_classes = [IsAuthenticated]
