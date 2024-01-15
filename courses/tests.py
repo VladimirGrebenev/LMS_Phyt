@@ -19,7 +19,7 @@ class TestCourseListCreateView(TestCase):
         """ Пробуем получить доступ к списку курсов авторизованным 
         пользователем """
         factory = APIRequestFactory()
-        request = factory.get('/courses/')
+        request = factory.get(reverse('course-list-create'))
         # авторизуемся, чтобы получить доступ
         custom_user = CustomUser.objects.create_superuser(
             'doomguy@mail.ru', 'iddqd', )
@@ -32,7 +32,7 @@ class TestCourseListCreateView(TestCase):
         """ Пробуем получить доступ к списку курсов не авторизованным
         пользователем """
         factory = APIRequestFactory()
-        request = factory.get('/courses/')
+        request = factory.get(reverse('course-list-create'))
         view = CourseListCreateView.as_view()
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -48,7 +48,7 @@ class TestCourseListCreateView(TestCase):
             'teacher': teacher.id,
 
         }
-        request = factory.post('/courses/', data=data, format='json')
+        request = factory.post(path=reverse('course-list-create'), data=data, format='json')
         # авторизуемся, чтобы получить доступ
         custom_user = CustomUser.objects.create_superuser(
             'doomguy@mail.ru', 'iddqd', )
@@ -68,7 +68,7 @@ class TestCourseListCreateView(TestCase):
             'teacher': teacher.id,
 
         }
-        request = factory.post('/courses/', data=data, format='json')
+        request = factory.post(path=reverse('course-list-create'), data=data, format='json')
         view = CourseListCreateView.as_view()
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -83,7 +83,7 @@ class TestCourseListCreateView(TestCase):
             'course_description': 'description',
             'teacher': teacher.id,
         }
-        request = factory.post('/courses/', data=data, format='json')
+        request = factory.post(path=reverse('course-list-create'), data=data, format='json')
         # авторизуемся, чтобы получить доступ
         custom_user = CustomUser.objects.create_superuser(
             'doomguy@mail.ru', 'iddqd', )
@@ -102,7 +102,9 @@ class TestCourseRetrieveUpdateDestroyView(TestCase):
         course = mixer.blend(Course, course_title='course_title',
                              course_description='course_description',
                              teacher=teacher, )
-        request = factory.get(f'/courses/{course.pk}/')
+        url = reverse('subscription-retrieve-update-destroy',
+                      kwargs={'pk': course.pk})
+        request = factory.get(url)
         # авторизуемся, чтобы получить доступ
         custom_user = CustomUser.objects.create_user(
             'doomguy@mail.ru', 'iddqd', role=UserRoles.STUDENT)
@@ -119,7 +121,9 @@ class TestCourseRetrieveUpdateDestroyView(TestCase):
         course = mixer.blend(Course, course_title='course_title',
                              course_description='course_description',
                              teacher=teacher, )
-        request = factory.get(f'/courses/{course.pk}/')
+        url = reverse('subscription-retrieve-update-destroy',
+                      kwargs={'pk': course.pk})
+        request = factory.get(url)
         view = CourseRetrieveUpdateDestroyView.as_view()
         response = view(request, pk=course.pk)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -178,7 +182,9 @@ class TestCourseRetrieveUpdateDestroyView(TestCase):
         course = mixer.blend(Course, course_title='course_title',
                              course_description='course_description',
                              teacher=teacher, )
-        request = factory.delete(f'/courses/{course.pk}/')
+        url = reverse('subscription-retrieve-update-destroy',
+                      kwargs={'pk': course.pk})
+        request = factory.delete(url)
         # авторизуемся, чтобы получить доступ
         custom_user = CustomUser.objects.create_superuser(
             'doomguy@mail.ru', 'iddqd', role=UserRoles.MODERATOR)
@@ -195,7 +201,9 @@ class TestCourseRetrieveUpdateDestroyView(TestCase):
         course = mixer.blend(Course, course_title='course_title',
                              course_description='course_description',
                              teacher=teacher, )
-        request = factory.delete(f'/courses/{course.pk}/')
+        url = reverse('subscription-retrieve-update-destroy',
+                      kwargs={'pk': course.pk})
+        request = factory.delete(url)
         view = CourseRetrieveUpdateDestroyView.as_view()
         response = view(request, pk=course.pk)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -206,7 +214,7 @@ class TestSubscriptionListCreateView(TestCase):
         """ Пробуем получить доступ к списку подписок авторизованным
         пользователем """
         factory = APIRequestFactory()
-        request = factory.get('/subscriptions/')
+        request = factory.get(reverse('subscription-list-create'))
         # авторизуемся, чтобы получить доступ
         custom_user = CustomUser.objects.create_superuser(
             'doomguy@mail.ru', 'iddqd', )
@@ -219,7 +227,7 @@ class TestSubscriptionListCreateView(TestCase):
         """ Пробуем получить доступ к списку подписок не авторизованным
         пользователем """
         factory = APIRequestFactory()
-        request = factory.get('/subscriptions/')
+        request = factory.get(reverse('subscription-list-create'))
         view = SubscriptionListCreateView.as_view()
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -21,4 +21,18 @@ class Subscription(models.Model):
     created_datetime = models.DateTimeField(auto_now_add=True)
     subscription_status = models.BooleanField(default=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    student = models.ForeignKey(CustomUser,
+                                related_name='student_subscriptions',
+                                on_delete=models.CASCADE)
+    teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+                                related_name='teacher_subscriptions',
+                                null=True,
+                                blank=True)
+
+    def __str__(self):
+        return f'подписка на курс {self.course.course_title}'
+
+    def save(self, *args, **kwargs):
+        if not self.teacher:
+            self.teacher = self.course.teacher
+        super().save(*args, **kwargs)
