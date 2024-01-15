@@ -6,6 +6,9 @@ from .filters import CourseFilter, SubscriptionFilter
 from drf_yasg.utils import swagger_auto_schema
 from .permissions import IsModerator, IsTeacher
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 # пагинатор для Course
 class CourseLimitOffsetPagination(LimitOffsetPagination):
@@ -48,7 +51,8 @@ class SubscriptionListCreateView(generics.ListCreateAPIView):
     filterset_class = SubscriptionFilter
 
 
-class SubscriptionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class SubscriptionRetrieveUpdateDestroyView(
+    generics.RetrieveUpdateDestroyAPIView):
     """By Subscription pk, you can retrieve, update or patch, delete
     Subscription"""
     queryset = Subscription.objects.all()
@@ -62,6 +66,31 @@ class SubscriptionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+
+class CourseDetailAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            course = Course.objects.get(pk=pk)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)
+
+        subscriptions = Subscription.objects.filter(course=course)
+        course_detail = {
+            'course_title': course.course_title,
+            'course_description': course.course_description,
+            'course_teacher': course.teacher.user_name,
+            'course_student_count': subscriptions.count(),
+            'subscriptions': [],
+        }
+
+        for subscription in subscriptions:
+            course_detail['subscriptions'].append({
+                'student_id': subscription.student.user_name,
+                'created_datetime': subscription.created_datetime,
+            })
+
+        return Response(course_detail)
 
 # @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 # @permission_classes([IsAuthenticated, IsTeacher | IsModerator])
